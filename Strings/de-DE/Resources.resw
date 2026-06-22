@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="EmptyDay" xml:space="preserve">
+    <value>Keine Screenshots</value>
+  </data>
+  <data name="GotoCurrentWeek" xml:space="preserve">
+    <value>Zur aktuellen Woche</value>
+  </data>
+  <data name="WeekLabel" xml:space="preserve">
+    <value>KW</value>
+  </data>
+  <data name="ColumnDateFormat" xml:space="preserve">
+    <value>dd.MM.</value>
+  </data>
+  <data name="TimeUhrSuffix" xml:space="preserve">
+    <value> Uhr</value>
+  </data>
+  <!-- {0}=startDay  {1}=endDay  {2}=monthName  {3}=year -->
+  <data name="WeekRangeSameMonth" xml:space="preserve">
+    <value>{0}.–{1}. {2} {3}</value>
+  </data>
+  <!-- {0}=startDay  {1}=startMonthName  {2}=endDay  {3}=endMonthName  {4}=year -->
+  <data name="WeekRangeDiffMonth" xml:space="preserve">
+    <value>{0}. {1} – {2}. {3} {4}</value>
+  </data>
+  <data name="TrayTooltip" xml:space="preserve">
+    <value>TimeSnap&#10;Strg+Alt+Shift+Y = Screenshot</value>
+  </data>
+  <data name="PrevWeekTip" xml:space="preserve">
+    <value>Vorherige Woche</value>
+  </data>
+  <data name="NextWeekTip" xml:space="preserve">
+    <value>Nächste Woche</value>
+  </data>
+  <data name="PrevImageTip" xml:space="preserve">
+    <value>Vorheriges Bild (←)</value>
+  </data>
+  <data name="NextImageTip" xml:space="preserve">
+    <value>Nächstes Bild (→)</value>
+  </data>
+  <data name="CloseTip" xml:space="preserve">
+    <value>Schließen (Esc)</value>
+  </data>
+  <data name="MenuOpen" xml:space="preserve">
+    <value>Öffnen</value>
+  </data>
+  <data name="MenuExit" xml:space="preserve">
+    <value>Beenden</value>
+  </data>
+</root>
