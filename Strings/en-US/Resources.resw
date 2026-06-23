@@ -23,8 +23,9 @@
   <data name="WeekRangeDiffMonth" xml:space="preserve">
     <value>{1} {0} – {3} {2}, {4}</value>
   </data>
+  <!-- {0}=current hotkey combination, e.g. "Ctrl+Alt+Shift+Y" -->
   <data name="TrayTooltip" xml:space="preserve">
-    <value>TimeSnap&#10;Ctrl+Alt+Shift+Y = Screenshot</value>
+    <value>TimeSnap&#10;{0} = Screenshot</value>
   </data>
   <data name="PrevWeekTip" xml:space="preserve">
     <value>Previous week</value>
@@ -46,5 +47,226 @@
   </data>
   <data name="MenuExit" xml:space="preserve">
     <value>Exit</value>
+  </data>
+  <data name="DesktopWindowTitle" xml:space="preserve">
+    <value>Desktop</value>
+  </data>
+  <data name="MenuSettings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="SettingsWindowTitle" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="SettingsScaffoldNotice" xml:space="preserve">
+    <value>Appearance, sound, storage location, hotkey, weekend visibility, and monitor selection take effect immediately. Language takes effect after restarting the app.</value>
+  </data>
+  <data name="SettingsLanguageRestartNotice" xml:space="preserve">
+    <value>The language change will take effect after restarting the app.</value>
+  </data>
+  <data name="SettingsRestartNowButton" xml:space="preserve">
+    <value>Restart now</value>
+  </data>
+  <data name="SettingsGeneralHeader" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="SettingsHotkeyLabel" xml:space="preserve">
+    <value>Hotkey combination</value>
+  </data>
+  <data name="SettingsHotkeyHint" xml:space="preserve">
+    <value>Click "Record" and then press the desired key combination.</value>
+  </data>
+  <data name="SettingsHotkeyRecordButton" xml:space="preserve">
+    <value>Record</value>
+  </data>
+  <data name="SettingsHotkeyRecordingPrompt" xml:space="preserve">
+    <value>Press a key combination…</value>
+  </data>
+  <data name="SettingsHotkeyResetButton" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="SettingsHotkeyNeedsModifierError" xml:space="preserve">
+    <value>The key combination must include at least one modifier (Ctrl/Alt/Shift/Win).</value>
+  </data>
+  <data name="SettingsHotkeyInvalidTitle" xml:space="preserve">
+    <value>Key combination not usable</value>
+  </data>
+  <data name="SettingsHotkeyAlreadyUsedError" xml:space="preserve">
+    <value>This key combination is already used by another program.</value>
+  </data>
+  <!-- {0}=Win32 error code -->
+  <data name="SettingsHotkeyRegisterError" xml:space="preserve">
+    <value>The key combination could not be registered (error code {0}).</value>
+  </data>
+  <data name="HotkeyModifierCtrl" xml:space="preserve">
+    <value>Ctrl</value>
+  </data>
+  <data name="HotkeyModifierAlt" xml:space="preserve">
+    <value>Alt</value>
+  </data>
+  <data name="HotkeyModifierShift" xml:space="preserve">
+    <value>Shift</value>
+  </data>
+  <data name="HotkeyModifierWin" xml:space="preserve">
+    <value>Win</value>
+  </data>
+  <data name="HotkeyKeySpace" xml:space="preserve">
+    <value>Space</value>
+  </data>
+  <data name="HotkeyKeyTab" xml:space="preserve">
+    <value>Tab</value>
+  </data>
+  <data name="HotkeyKeyEnter" xml:space="preserve">
+    <value>Enter</value>
+  </data>
+  <data name="HotkeyKeyEscape" xml:space="preserve">
+    <value>Esc</value>
+  </data>
+  <data name="HotkeyKeyInsert" xml:space="preserve">
+    <value>Insert</value>
+  </data>
+  <data name="HotkeyKeyDelete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="HotkeyKeyHome" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="HotkeyKeyEnd" xml:space="preserve">
+    <value>End</value>
+  </data>
+  <data name="HotkeyKeyPageUp" xml:space="preserve">
+    <value>Page Up</value>
+  </data>
+  <data name="HotkeyKeyPageDown" xml:space="preserve">
+    <value>Page Down</value>
+  </data>
+  <data name="SettingsSoundLabel" xml:space="preserve">
+    <value>Play sound on screenshot</value>
+  </data>
+  <data name="SettingsShowWeekendLabel" xml:space="preserve">
+    <value>Show weekend (Saturday &amp; Sunday)</value>
+  </data>
+  <data name="SettingsLanguageLabel" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="SettingsLanguageSystem" xml:space="preserve">
+    <value>System default</value>
+  </data>
+  <data name="SettingsLanguageGerman" xml:space="preserve">
+    <value>German</value>
+  </data>
+  <data name="SettingsLanguageEnglish" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="SettingsFolderLabel" xml:space="preserve">
+    <value>Screenshot storage location</value>
+  </data>
+  <data name="SettingsMonitorsHeader" xml:space="preserve">
+    <value>Displays</value>
+  </data>
+  <data name="SettingsMonitorsHint" xml:space="preserve">
+    <value>Choose which displays are captured on hotkey press. If multiple displays are selected, a separate screenshot is saved for each one.</value>
+  </data>
+  <!-- {0}=number  {1}=width  {2}=height -->
+  <data name="SettingsMonitorLabel" xml:space="preserve">
+    <value>Display {0} ({1}x{2})</value>
+  </data>
+  <data name="SettingsMonitorPrimarySuffix" xml:space="preserve">
+    <value>(Primary)</value>
+  </data>
+  <data name="SettingsMonitorsNoneSelectedError" xml:space="preserve">
+    <value>At least one display must be selected.</value>
+  </data>
+  <data name="SettingsBrowseButton" xml:space="preserve">
+    <value>Browse…</value>
+  </data>
+  <data name="SettingsThemeLabel" xml:space="preserve">
+    <value>Appearance</value>
+  </data>
+  <data name="SettingsThemeSystem" xml:space="preserve">
+    <value>System</value>
+  </data>
+  <data name="SettingsThemeLight" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="SettingsThemeDark" xml:space="preserve">
+    <value>Dark</value>
+  </data>
+  <data name="SettingsSaveButton" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="SettingsSavedMessage" xml:space="preserve">
+    <value>Settings saved.</value>
+  </data>
+  <data name="SettingsDangerZoneHeader" xml:space="preserve">
+    <value>Delete content</value>
+  </data>
+  <data name="SettingsDangerZoneHint" xml:space="preserve">
+    <value>Permanently removes all saved screenshots from disk.</value>
+  </data>
+  <data name="SettingsDeleteAllButton" xml:space="preserve">
+    <value>Delete all screenshots</value>
+  </data>
+  <data name="SettingsDeleteConfirmTitle" xml:space="preserve">
+    <value>Delete all screenshots?</value>
+  </data>
+  <data name="SettingsDeleteConfirmBody" xml:space="preserve">
+    <value>This action cannot be undone. All saved screenshots will be permanently deleted.</value>
+  </data>
+  <data name="SettingsDeleteConfirmPrimary" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="SettingsDeleteConfirmCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="SettingsDeleteSuccessMessage" xml:space="preserve">
+    <value>All screenshots have been deleted.</value>
+  </data>
+  <data name="SettingsDeleteEmptyMessage" xml:space="preserve">
+    <value>There were no screenshots to delete.</value>
+  </data>
+  <data name="SettingsSavedAndMovedMessage" xml:space="preserve">
+    <value>Settings saved. Existing screenshots have been moved.</value>
+  </data>
+  <data name="SettingsFolderMoveDialogTitle" xml:space="preserve">
+    <value>Move screenshots?</value>
+  </data>
+  <!-- {0}=old path  {1}=new path -->
+  <data name="SettingsFolderMoveDialogBody" xml:space="preserve">
+    <value>The storage location changed from:
+{0}
+to:
+{1}
+
+Should existing screenshots be moved to the new folder?</value>
+  </data>
+  <data name="SettingsFolderMoveDialogMovePrimary" xml:space="preserve">
+    <value>Move</value>
+  </data>
+  <data name="SettingsFolderMoveDialogKeepSecondary" xml:space="preserve">
+    <value>Only new screenshots</value>
+  </data>
+  <data name="SettingsFolderMoveDialogCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="SettingsFolderInvalidTitle" xml:space="preserve">
+    <value>Folder not usable</value>
+  </data>
+  <!-- {0}=error detail -->
+  <data name="SettingsFolderInvalidBody" xml:space="preserve">
+    <value>The selected folder doesn't exist or TimeSnap doesn't have write access to it.
+
+{0}</value>
+  </data>
+  <data name="SettingsFolderMoveErrorTitle" xml:space="preserve">
+    <value>Move failed</value>
+  </data>
+  <!-- {0}=error detail -->
+  <data name="SettingsFolderMoveErrorBody" xml:space="preserve">
+    <value>The existing screenshots could not be fully moved. Settings were not saved.
+
+{0}</value>
+  </data>
+  <data name="DialogOkButton" xml:space="preserve">
+    <value>OK</value>
   </data>
 </root>

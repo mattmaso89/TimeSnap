@@ -30,9 +30,12 @@ internal static class FlashService
     private static IntPtr _whiteBrush;
     private static bool   _classRegistered;
 
-    public static void Show()
+    // x/y/width/height are virtual-screen coordinates of the monitor to flash —
+    // callers show one flash per captured monitor so the feedback always
+    // appears on the screen(s) that were actually captured.
+    public static void Show(int x, int y, int width, int height)
     {
-        var thread = new Thread(RunFlash) { IsBackground = true, Name = "TimeSnap-Flash" };
+        var thread = new Thread(() => RunFlash(x, y, width, height)) { IsBackground = true, Name = "TimeSnap-Flash" };
         thread.SetApartmentState(ApartmentState.STA);
         thread.Start();
     }
@@ -59,16 +62,13 @@ internal static class FlashService
         }
     }
 
-    private static void RunFlash()
+    private static void RunFlash(int x, int y, int w, int h)
     {
         EnsureWindowClass();
 
-        int w = NativeMethods.GetSystemMetrics(NativeMethods.SM_CXSCREEN);
-        int h = NativeMethods.GetSystemMetrics(NativeMethods.SM_CYSCREEN);
-
         var hwnd = NativeMethods.CreateWindowEx(
             FlashExStyle, ClassName, "",
-            FlashStyle, 0, 0, w, h,
+            FlashStyle, x, y, w, h,
             IntPtr.Zero, IntPtr.Zero, NativeMethods.GetModuleHandle(null), IntPtr.Zero);
 
         if (hwnd == IntPtr.Zero) return;

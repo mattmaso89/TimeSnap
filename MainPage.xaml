@@ -38,7 +38,7 @@
                                Height="62"
                                HorizontalAlignment="Stretch"
                                Stretch="UniformToFill"/>
-                        <TextBlock Text="{Binding TimeText}"
+                        <TextBlock Text="{Binding TimeAndMonitorText}"
                                    TextAlignment="Center"
                                    Style="{StaticResource CaptionTextBlockStyle}"
                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
@@ -116,11 +116,13 @@
             </Grid>
         </Border>
 
-        <!-- ═══ Five day columns ═════════════════════════════════════════════ -->
+        <!-- ═══ Day columns (Mon-Fri always; Sat/Sun width-toggled by "Show weekend") ═══ -->
         <Grid Grid.Row="1" Padding="12,8,12,12" ColumnSpacing="8">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/><ColumnDefinition/><ColumnDefinition/>
                 <ColumnDefinition/><ColumnDefinition/>
+                <ColumnDefinition x:Name="SaturdayColumn" Width="0"/>
+                <ColumnDefinition x:Name="SundayColumn" Width="0"/>
             </Grid.ColumnDefinitions>
 
             <!-- ── Monday ── -->
@@ -265,6 +267,68 @@
                                   Padding="6" ItemTemplate="{StaticResource ThumbnailTemplate}"
                                   ItemContainerStyle="{StaticResource ThumbnailItemStyle}"/>
                         <TextBlock x:Name="FridayEmpty"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                   Foreground="{ThemeResource TextFillColorDisabledBrush}"
+                                   Visibility="Collapsed"/>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <!-- ── Saturday (only shown when "Show weekend" is enabled) ── -->
+            <Border x:Name="SaturdayBorder" Grid.Column="5" CornerRadius="8"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    Visibility="Collapsed">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Border x:Name="SaturdayHeaderBorder" Grid.Row="0" CornerRadius="8,8,0,0" Padding="8,10">
+                        <TextBlock x:Name="SaturdayHeader" TextAlignment="Center"
+                                   Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                    </Border>
+                    <Rectangle Grid.Row="0" VerticalAlignment="Bottom" Height="1"
+                               Fill="{ThemeResource DividerStrokeColorDefaultBrush}"/>
+                    <Grid Grid.Row="1">
+                        <ListView x:Name="SaturdayList" IsItemClickEnabled="True"
+                                  ItemClick="Screenshot_ItemClick" SelectionMode="None"
+                                  Padding="6" ItemTemplate="{StaticResource ThumbnailTemplate}"
+                                  ItemContainerStyle="{StaticResource ThumbnailItemStyle}"/>
+                        <TextBlock x:Name="SaturdayEmpty"
+                                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                                   Style="{StaticResource CaptionTextBlockStyle}"
+                                   Foreground="{ThemeResource TextFillColorDisabledBrush}"
+                                   Visibility="Collapsed"/>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <!-- ── Sunday (only shown when "Show weekend" is enabled) ── -->
+            <Border x:Name="SundayBorder" Grid.Column="6" CornerRadius="8"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    Visibility="Collapsed">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Border x:Name="SundayHeaderBorder" Grid.Row="0" CornerRadius="8,8,0,0" Padding="8,10">
+                        <TextBlock x:Name="SundayHeader" TextAlignment="Center"
+                                   Style="{StaticResource BodyStrongTextBlockStyle}"/>
+                    </Border>
+                    <Rectangle Grid.Row="0" VerticalAlignment="Bottom" Height="1"
+                               Fill="{ThemeResource DividerStrokeColorDefaultBrush}"/>
+                    <Grid Grid.Row="1">
+                        <ListView x:Name="SundayList" IsItemClickEnabled="True"
+                                  ItemClick="Screenshot_ItemClick" SelectionMode="None"
+                                  Padding="6" ItemTemplate="{StaticResource ThumbnailTemplate}"
+                                  ItemContainerStyle="{StaticResource ThumbnailItemStyle}"/>
+                        <TextBlock x:Name="SundayEmpty"
                                    HorizontalAlignment="Center" VerticalAlignment="Center"
                                    Style="{StaticResource CaptionTextBlockStyle}"
                                    Foreground="{ThemeResource TextFillColorDisabledBrush}"

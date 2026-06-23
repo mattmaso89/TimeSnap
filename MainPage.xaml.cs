@@ -4,17 +4,20 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
+using TimeSnap.Services;
 
 namespace TimeSnap;
 
 public sealed partial class MainPage : Page
 {
     private DateTime _currentWeekMonday;
-    private readonly string _basePath;
 
     // Folder names on disk are always German — they are storage identifiers, not UI text.
+    // Saturday/Sunday are always included here: screenshots taken on a weekend are
+    // still saved into these folders regardless of the "show weekend" setting, which
+    // only controls whether the matching UI columns are visible.
     private static readonly string[] DayFolders =
-        ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag"];
+        ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"];
 
     private ListView[]  _lists         = null!;
     private TextBlock[] _headers       = null!;
@@ -28,14 +31,10 @@ public sealed partial class MainPage : Page
     {
         InitializeComponent();
 
-        _basePath = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.MyPictures),
-            "TimeSnap", "Screenshots");
-
-        _lists         = [MondayList,         TuesdayList,         WednesdayList,         ThursdayList,         FridayList];
-        _headers       = [MondayHeader,        TuesdayHeader,       WednesdayHeader,       ThursdayHeader,       FridayHeader];
-        _headerBorders = [MondayHeaderBorder,  TuesdayHeaderBorder, WednesdayHeaderBorder, ThursdayHeaderBorder, FridayHeaderBorder];
-        _emptyTexts    = [MondayEmpty,         TuesdayEmpty,        WednesdayEmpty,        ThursdayEmpty,        FridayEmpty];
+        _lists         = [MondayList,        TuesdayList,         WednesdayList,         ThursdayList,         FridayList,        SaturdayList,        SundayList];
+        _headers       = [MondayHeader,        TuesdayHeader,       WednesdayHeader,       ThursdayHeader,       FridayHeader,        SaturdayHeader,       SundayHeader];
+        _headerBorders = [MondayHeaderBorder,  TuesdayHeaderBorder, WednesdayHeaderBorder, ThursdayHeaderBorder, FridayHeaderBorder,  SaturdayHeaderBorder, SundayHeaderBorder];
+        _emptyTexts    = [MondayEmpty,         TuesdayEmpty,        WednesdayEmpty,        ThursdayEmpty,        FridayEmpty,       SaturdayEmpty,       SundayEmpty];
 
         ApplyStaticStrings();
 
@@ -43,7 +42,12 @@ public sealed partial class MainPage : Page
         LoadWeekData();
 
         if (App.Current is App app)
+        {
             app.ScreenshotSaved += OnScreenshotSaved;
+            app.ScreenshotsCleared += OnStorageChanged;
+            app.ScreenshotFolderChanged += OnStorageChanged;
+            app.ShowWeekendChanged += OnStorageChanged;
+        }
     }
 
     // Sets all localizable strings that don't change after startup.
@@ -65,23 +69,43 @@ public sealed partial class MainPage : Page
     private void OnScreenshotSaved(string _)
     {
         var today = DateTime.Today;
-        if (today >= _currentWeekMonday && today < _currentWeekMonday.AddDays(5))
+        if (today >= _currentWeekMonday && today < _currentWeekMonday.AddDays(7))
             LoadWeekData();
+    }
+
+    // Screenshots were deleted, the storage folder was changed, or the weekend
+    // visibility setting changed, via the settings page — close any open preview
+    // (it may reference files that are now gone, moved, or hidden) and reload,
+    // regardless of which week is shown.
+    private void OnStorageChanged()
+    {
+        ClosePreview();
+        LoadWeekData();
     }
 
     // ── Week loading ───────────────────────────────────────────────────────
 
     private void LoadWeekData()
     {
-        UpdateWeekHeader();
+        bool showWeekend = SettingsService.Current.ShowWeekend;
+        int dayCount = showWeekend ? 7 : 5;
+
+        var weekendColumnWidth = showWeekend ? new GridLength(1, GridUnitType.Star) : new GridLength(0);
+        SaturdayColumn.Width = weekendColumnWidth;
+        SundayColumn.Width   = weekendColumnWidth;
+        SaturdayBorder.Visibility = showWeekend ? Visibility.Visible : Visibility.Collapsed;
+        SundayBorder.Visibility   = showWeekend ? Visibility.Visible : Visibility.Collapsed;
+
+        UpdateWeekHeader(dayCount);
 
         int weekNum = ISOWeek.GetWeekOfYear(_currentWeekMonday);
         string weekFolder = $"{_currentWeekMonday.Year}-KW{weekNum:D2}";
 
         var culture      = CultureInfo.CurrentUICulture;
         string dateFmt   = Loc.Get("ColumnDateFormat"); // "dd.MM." or "M/d"
+        string basePath  = SettingsService.EffectiveScreenshotFolder;
 
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < dayCount; i++)
         {
             var date = _currentWeekMonday.AddDays(i);
 
@@ -92,7 +116,7 @@ public sealed partial class MainPage : Page
 
             ApplyHeaderStyle(_headerBorders[i], _headers[i], isToday: date.Date == DateTime.Today);
 
-            var items = LoadDayItems(Path.Combine(_basePath, weekFolder, DayFolders[i]));
+            var items = LoadDayItems(Path.Combine(basePath, weekFolder, DayFolders[i]));
             _lists[i].ItemsSource = items;
 
             bool any = items.Count > 0;
@@ -111,21 +135,21 @@ public sealed partial class MainPage : Page
             .Select(f => new ScreenshotItem(f))];
     }
 
-    private void UpdateWeekHeader()
+    private void UpdateWeekHeader(int dayCount)
     {
         int week    = ISOWeek.GetWeekOfYear(_currentWeekMonday);
-        var friday  = _currentWeekMonday.AddDays(4);
+        var lastDay = _currentWeekMonday.AddDays(dayCount - 1);
         var culture = CultureInfo.CurrentUICulture;
         var dtf     = culture.DateTimeFormat;
 
         string startMonth = dtf.GetMonthName(_currentWeekMonday.Month);
-        string endMonth   = dtf.GetMonthName(friday.Month);
+        string endMonth   = dtf.GetMonthName(lastDay.Month);
 
-        string range = _currentWeekMonday.Month == friday.Month
+        string range = _currentWeekMonday.Month == lastDay.Month
             ? string.Format(Loc.Get("WeekRangeSameMonth"),
-                _currentWeekMonday.Day, friday.Day, endMonth, friday.Year)
+                _currentWeekMonday.Day, lastDay.Day, endMonth, lastDay.Year)
             : string.Format(Loc.Get("WeekRangeDiffMonth"),
-                _currentWeekMonday.Day, startMonth, friday.Day, endMonth, friday.Year);
+                _currentWeekMonday.Day, startMonth, lastDay.Day, endMonth, lastDay.Year);
 
         WeekHeaderText.Text = $"{Loc.Get("WeekLabel")} {week}  ·  {range}";
 
@@ -206,7 +230,9 @@ public sealed partial class MainPage : Page
         var item = _previewItems[_previewIndex];
 
         PreviewImage.Source  = new BitmapImage(new Uri(item.FilePath));
-        PreviewTimeText.Text = $"{item.TimeText}{Loc.Get("TimeUhrSuffix")}";
+        PreviewTimeText.Text = string.IsNullOrEmpty(item.MonitorLabel)
+            ? $"{item.TimeText}{Loc.Get("TimeUhrSuffix")}"
+            : $"{item.TimeText}{Loc.Get("TimeUhrSuffix")} · {item.MonitorLabel}";
 
         bool hasTitle = !string.IsNullOrEmpty(item.WindowTitle);
         PreviewTitleText.Text       = item.WindowTitle;

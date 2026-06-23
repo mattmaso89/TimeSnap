@@ -4,13 +4,14 @@ using System.Runtime.InteropServices;
 namespace TimeSnap.Services;
 
 /// <summary>
-/// Registers a global hotkey (Ctrl+Shift+S) via Win32 RegisterHotKey.
+/// Registers a configurable global hotkey via Win32 RegisterHotKey.
 /// Registration and unregistration happen on the MessageWindow thread,
 /// as Win32 requires the caller thread to own the target HWND.
 /// </summary>
 internal sealed class HotkeyService : IDisposable
 {
     private const int HotkeyId = 1;
+    private const int TestHotkeyId = 0xCAFE;
 
     private readonly MessageWindow _messageWindow;
     private bool _registered;
@@ -27,52 +28,53 @@ internal sealed class HotkeyService : IDisposable
         };
     }
 
-    public bool Register()
+    // Registers (modifiers, virtualKey) as the live global hotkey, replacing
+    // whatever combination was registered before. Safe to call again later to
+    // swap the hotkey at runtime — the previous registration is released first.
+    public bool Register(uint modifiers, uint virtualKey)
     {
-        if (_registered) return true;
+        bool ok = false;
 
-        IntPtr hwnd = _messageWindow.Handle;
-        uint mods = NativeMethods.MOD_CONTROL | NativeMethods.MOD_ALT | NativeMethods.MOD_SHIFT | NativeMethods.MOD_NOREPEAT;
-
-        Debug.WriteLine($"[HotkeyService] Registriere Hotkey auf MessageWindow-Thread " +
-                        $"(HWND=0x{hwnd:X}, mods=0x{mods:X}, vk=0x{NativeMethods.VK_Y:X})...");
-
-        // RegisterHotKey must be called from the thread that owns the HWND.
         _messageWindow.Invoke(() =>
         {
-            _registered = NativeMethods.RegisterHotKey(hwnd, HotkeyId, mods, NativeMethods.VK_Y);
-
             if (_registered)
             {
-                Debug.WriteLine("[HotkeyService] RegisterHotKey ERFOLGREICH – Strg+Shift+S aktiv.");
+                NativeMethods.UnregisterHotKey(_messageWindow.Handle, HotkeyId);
+                _registered = false;
             }
-            else
-            {
-                int err = Marshal.GetLastWin32Error();
-                string hint = err switch
-                {
-                    1409 => "ERROR_HOTKEY_ALREADY_REGISTERED – von anderer App belegt",
-                    1408 => "ERROR_INVALID_WINDOW_HANDLE – falscher Thread (sollte jetzt behoben sein)",
-                    5    => "ERROR_ACCESS_DENIED",
-                    87   => "ERROR_INVALID_PARAMETER",
-                    _    => $"Fehlercode {err}"
-                };
-                Debug.WriteLine($"[HotkeyService] RegisterHotKey FEHLGESCHLAGEN – {hint}");
-            }
+
+            ok = NativeMethods.RegisterHotKey(
+                _messageWindow.Handle, HotkeyId, modifiers | NativeMethods.MOD_NOREPEAT, virtualKey);
+            _registered = ok;
+
+            Debug.WriteLine(ok
+                ? $"[HotkeyService] RegisterHotKey ERFOLGREICH (mods=0x{modifiers:X}, vk=0x{virtualKey:X})."
+                : $"[HotkeyService] RegisterHotKey FEHLGESCHLAGEN – Fehlercode {Marshal.GetLastWin32Error()}");
         });
 
-        return _registered;
+        return ok;
+    }
+
+    // Tests whether (modifiers, virtualKey) could be registered as a global
+    // hotkey right now — i.e. it isn't already claimed by another application.
+    // Registers and immediately unregisters again; never touches the app's
+    // actual live hotkey (registered separately on the MessageWindow thread).
+    public static bool IsAvailable(uint modifiers, uint virtualKey, out int win32Error)
+    {
+        bool ok = NativeMethods.RegisterHotKey(IntPtr.Zero, TestHotkeyId, modifiers, virtualKey);
+        win32Error = ok ? 0 : Marshal.GetLastWin32Error();
+
+        if (ok)
+            NativeMethods.UnregisterHotKey(IntPtr.Zero, TestHotkeyId);
+
+        return ok;
     }
 
     public void Dispose()
     {
         if (_registered)
         {
-            _messageWindow.Invoke(() =>
-            {
-                NativeMethods.UnregisterHotKey(_messageWindow.Handle, HotkeyId);
-                Debug.WriteLine("[HotkeyService] Hotkey deregistriert.");
-            });
+            _messageWindow.Invoke(() => NativeMethods.UnregisterHotKey(_messageWindow.Handle, HotkeyId));
             _registered = false;
         }
     }

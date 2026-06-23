@@ -5,12 +5,22 @@ TimeSnap is a small Windows tray app that takes screenshots via a global hotkey 
 ## Main Features
 
 - Runs quietly in the background in the system tray (notification area)
-- Take a screenshot via the global hotkey **Ctrl+Alt+Shift+Y**, even when the app isn't in the foreground
-- Screenshots are automatically sorted and stored by calendar week (ISO week) and weekday (Monday–Friday)
-- Also captures the title of the most recently active window for each screenshot
+- Take a screenshot via a configurable global hotkey (default **Ctrl+Alt+Shift+Y**), even when the app isn't in the foreground
+- Screenshots are automatically sorted and stored by calendar week (ISO week) and weekday, optionally including the weekend
+- Also captures the title of the window that's actually in front on the captured screen
+- Multi-monitor support: choose which connected displays to capture; each selected monitor is saved as its own screenshot
 - Weekly view with navigation between weeks and a jump-to-current-week shortcut
 - Image preview with forward/back navigation between a day's screenshots
-- Multilingual UI (German/English, depending on system language)
+- Multilingual UI (German/English), selectable manually or following the system language
+- Settings page to configure:
+  - Hotkey combination (recorded live, with a check against combinations already used by other programs)
+  - Optional sound on screenshot
+  - Which screen(s) to capture
+  - Screenshot storage location (with an option to move existing screenshots when changed)
+  - Language (German/English/system default)
+  - Appearance (system/light/dark)
+  - Whether the weekend is shown in the weekly view
+  - Deleting all saved screenshots
 
 ## Requirements
 

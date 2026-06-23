@@ -10,6 +10,7 @@ internal sealed class TrayService : IDisposable
     private bool _disposed;
 
     public event Action? ShowWindowRequested;
+    public event Action? SettingsRequested;
     public event Action? ExitRequested;
 
     public TrayService(MessageWindow messageWindow, string iconPath)
@@ -30,10 +31,25 @@ internal sealed class TrayService : IDisposable
             uFlags          = NativeMethods.NIF_ICON | NativeMethods.NIF_MESSAGE | NativeMethods.NIF_TIP,
             uCallbackMessage = NativeMethods.WM_TRAYICON,
             hIcon           = hIcon,
-            szTip           = TimeSnap.Loc.Get("TrayTooltip")
+            szTip           = BuildTooltip()
         };
 
         NativeMethods.Shell_NotifyIcon(NativeMethods.NIM_ADD, ref _nid);
+    }
+
+    // Reflects the currently configured hotkey in the tray tooltip — called
+    // again after the settings page registers a new one at runtime.
+    public void UpdateTooltip()
+    {
+        _nid.szTip = BuildTooltip();
+        _nid.uFlags = NativeMethods.NIF_TIP;
+        NativeMethods.Shell_NotifyIcon(NativeMethods.NIM_MODIFY, ref _nid);
+    }
+
+    private static string BuildTooltip()
+    {
+        string hotkeyText = HotkeyFormat.Format(SettingsService.Current.HotkeyModifiers, SettingsService.Current.HotkeyVirtualKey);
+        return string.Format(TimeSnap.Loc.Get("TrayTooltip"), hotkeyText);
     }
 
     private void HandleTrayMessage(int iconId, uint mouseMsg)
@@ -54,6 +70,7 @@ internal sealed class TrayService : IDisposable
     {
         var hMenu = NativeMethods.CreatePopupMenu();
         NativeMethods.AppendMenu(hMenu, 0, new IntPtr(1), TimeSnap.Loc.Get("MenuOpen"));
+        NativeMethods.AppendMenu(hMenu, 0, new IntPtr(3), TimeSnap.Loc.Get("MenuSettings"));
         NativeMethods.AppendMenu(hMenu, NativeMethods.MF_SEPARATOR, IntPtr.Zero, null);
         NativeMethods.AppendMenu(hMenu, 0, new IntPtr(2), TimeSnap.Loc.Get("MenuExit"));
 
@@ -71,6 +88,7 @@ internal sealed class TrayService : IDisposable
         {
             case 1: ShowWindowRequested?.Invoke(); break;
             case 2: ExitRequested?.Invoke(); break;
+            case 3: SettingsRequested?.Invoke(); break;
         }
     }
 
